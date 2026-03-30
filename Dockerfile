@@ -46,5 +46,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Use shell form so $PORT expands (Railway sets $PORT at runtime)
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# Use shell form; fallback to 8000 if $PORT not set
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}

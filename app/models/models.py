@@ -153,6 +153,92 @@ class SystemEvent(Base):
     details = Column(JSON, nullable=True)
     message = Column(Text, nullable=True)
 
+# ============== LANDING PAGES ==============
+class LandingPage(Base):
+    """ Personalized teaser page for a lead """
+    __tablename__ = "landing_pages"
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    lead_id = Column(Integer, ForeignKey("leads.id", ondelete="CASCADE"), nullable=False, unique=True)
+    property_id = Column(Integer, ForeignKey("properties.id"), nullable=False, unique=True)  # future-proof
+    slug = Column(String, unique=True, nullable=False, index=True)
+    teaser_video_url = Column(String, nullable=False)
+    thumbnail_url = Column(String, nullable=True)
+    headline = Column(String, nullable=False)
+    subheadline = Column(String, nullable=True)
+    cta_text = Column(String, default="Claim Your Free Teaser")
+    status = Column(String, default="active")  # active, inactive
+
+class LandingPageSubmission(Base):
+    """ Captured agent info from landing page form """
+    __tablename__ = "landing_page_submissions"
+
+    id = Column(Integer, primary_key=True)
+    submitted_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+    landing_page_id = Column(Integer, ForeignKey("landing_pages.id", ondelete="CASCADE"), nullable=False)
+    lead_id = Column(Integer, ForeignKey("leads.id", ondelete="SET NULL"), nullable=True)  # may match existing lead
+
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+    phone = Column(String, nullable=True)
+    ip_address = Column(String, nullable=True)
+    user_agent = Column(Text, nullable=True)
+
+    landing_page = relationship("LandingPage", backref="submissions")
+
+# ============== ORDERS ==============
+class Order(Base):
+    """ Stripe payment tracking """
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    lead_id = Column(Integer, ForeignKey("leads.id", ondelete="SET NULL"), nullable=True)
+    property_id = Column(Integer, ForeignKey("properties.id"), nullable=False)  # if we add properties table; for now use lead_id
+    stripe_checkout_session_id = Column(String, unique=True, nullable=True)
+    stripe_payment_intent_id = Column(String, unique=True, nullable=True)
+    product_name = Column(String, default="Premium Cinematic Video")
+    amount = Column(Float, nullable=False)  # in USD
+    currency = Column(String, default="usd")
+    order_status = Column(String, default="pending")  # pending, paid, fulfilled, refunded
+    paid_at = Column(DateTime, nullable=True)
+
+    lead = relationship("Lead", backref="orders")
+
+# Properties table to store detailed listing info (optional, but can be integrated with Lead)
+class Property(Base):
+    """ Detailed property information (can be extracted from listing) """
+    __tablename__ = "properties"
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    lead_id = Column(Integer, ForeignKey("leads.id", ondelete="CASCADE"), nullable=False, unique=True)
+    listing_url = Column(String, nullable=False)
+    address = Column(String)
+    city = Column(String)
+    state = Column(String)
+    zip_code = Column(String)
+    price = Column(Float)
+    beds = Column(Float)
+    baths = Column(Float)
+    sqft = Column(Integer)
+    headline = Column(String, nullable=True)
+    description = Column(Text, nullable=True)
+    features_json = Column(JSON, default=list)
+    source_payload_json = Column(JSON, default=dict)
+
+    lead = relationship("Lead", back_populates="property")
+
+# Extend Lead to have backrefs
+Lead.property = relationship("Property", uselist=False, back_populates="lead", cascade="all, delete-orphan")
+
 class Campaign(Base):
     __tablename__ = "campaigns"
 
@@ -189,6 +275,14 @@ Lead.outreach_logs = relationship("OutreachLog", back_populates="lead")
 OutreachLog.lead = relationship("Lead", back_populates="outreach_logs")
 Lead.system_events = relationship("SystemEvent", back_populates="lead", order_by="desc(SystemEvent.created_at)")
 SystemEvent.lead = relationship("Lead", back_populates="system_events")
+
+# Property relationship (one-to-one with Lead)
+Lead.property = relationship("Property", uselist=False, back_populates="lead", cascade="all, delete-orphan")
+Property.lead = relationship("Lead", back_populates="property")
+
+# LandingPage relationship (one-to-one with Lead)
+Lead.landing_page = relationship("LandingPage", uselist=False, back_populates="lead")
+LandingPage.lead = relationship("Lead", back_populates="landing_page")
 
 def init_db(engine_url: str = None):
     from app.core.config import settings

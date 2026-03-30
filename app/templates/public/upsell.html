@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upgrade to Premium Cinematic Video | Realviax</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <nav class="bg-blue-600 text-white p-4">
+    <div class="max-w-4xl mx-auto flex justify-between items-center">
+      <a href="/" class="text-xl font-bold">Realviax</a>
+      <span class="text-sm">AI-Powered Real Estate Video</span>
+    </div>
+  </nav>
+  <div class="max-w-4xl mx-auto p-6">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">Upgrade to Premium Cinematic Video</h1>
+      <p class="text-gray-600">Take your listing to the next level with a professional 60-second video.</p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold mb-4">What's included?</h2>
+        <ul class="list-disc list-inside space-y-2 text-gray-700">
+          <li>60-second cinematic edit (vs 30s teaser)</li>
+          <li>Enhanced pacing and transitions</li>
+          <li>Professional text overlays and Call to Action</li>
+          <li>Branding customization options</li>
+          <li>HD 1080p resolution</li>
+          <li>Full rights for your marketing use</li>
+          <li>Fast turnaround (24–48 hours)</li>
+        </ul>
+      </div>
+      <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-center items-center">
+        <div class="text-4xl font-bold text-blue-600 mb-2">$250</div>
+        <p class="text-gray-600 mb-6">One-time payment, permanent license</p>
+        <button id="checkout-btn" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition w-full max-w-xs">
+          Order Now
+        </button>
+        <p class="text-xs text-gray-500 mt-4">Secure payment via Stripe</p>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold mb-2">Comparison</h3>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="p-3"></th>
+            <th class="p-3">Free Teaser</th>
+            <th class="p-3 font-bold text-blue-600">Premium Cinematic</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b"><td class="p-3">Duration</td><td class="p-3">30 seconds</td><td class="p-3">60 seconds</td></tr>
+          <tr class="border-b"><td class="p-3">Pacing</td><td class="p-3">Standard</td><td class="p-3">Cinematic</td></tr>
+          <tr class="border-b"><td class="p-3">Transitions</td><td class="p-3">Basic</td><td class="p-3">Polished</td></tr>
+          <tr class="border-b"><td class="p-3">Branding</td><td class="p-3">Standard</td><td class="p-3">Customizable</td></tr>
+          <tr class="border-b"><td class="p-3">CTA End Card</td><td class="p-3">Generic</td><td class="p-3">Agent-branded</td></tr>
+          <tr class="border-b"><td class="p-3">Delivery</td><td class="p-3">Instant</td><td class="p-3">24–48 hrs</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <footer class="mt-8 text-sm text-gray-500 text-center">
+      <p>&copy; {{ year }} Realviax Studios</p>
+    </footer>
+  </div>
+  <script>
+    document.getElementById('checkout-btn').addEventListener('click', async () => {
+      const resp = await fetch('/api/v1/payments/create-checkout-session/{{ lead_id }}', { method: 'POST' });
+      if (resp.ok) {
+        const data = await resp.json();
+        // Load Stripe
+        if (!window.Stripe) {
+          const script = document.createElement('script');
+          script.src = 'https://js.stripe.com/v3/';
+          script.onload = () => { const stripe = Stripe(data.publishable_key || '{{ stripe_publishable_key }}'); stripe.redirectToCheckout({ sessionId: data.sessionId }); };
+          document.head.appendChild(script);
+        } else {
+          const stripe = Stripe(data.publishable_key || '{{ stripe_publishable_key }}');
+          stripe.redirectToCheckout({ sessionId: data.sessionId });
+        }
+      } else {
+        alert('Failed to start checkout. Please try again.');
+      }
+    });
+  </script>
+</body>
+</html>

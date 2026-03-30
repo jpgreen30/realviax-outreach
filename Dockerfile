@@ -49,4 +49,3 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
 
 # Use sh -c so $PORT expands; set default 8000 if not provided
 ENV PORT=8000
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $PORT"]

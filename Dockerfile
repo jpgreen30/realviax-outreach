@@ -38,6 +38,7 @@ ENV PYTHONUNBUFFERED=1
 ENV VIDEO_OUTPUT_DIR=/app/output/videos
 ENV MUSIC_DIR=/app/assets/music
 ENV LOGO_PATH=/app/assets/logo.png
+ENV PORT=8000
 
 RUN mkdir -p output/videos assets/music
 

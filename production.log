@@ -1,0 +1,19 @@
+/home/jpgreen1/.openclaw/workspace/realviax-outreach/run.py:39: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+INFO:     Started server process [83693]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+/home/jpgreen1/.openclaw/workspace/realviax-outreach/run.py:402: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+🎬 Starting Realviax Outreach System...
+   Dashboard: http://localhost:8000/dashboard
+   API Docs: http://localhost:8000/docs
+INFO:     127.0.0.1:59276 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33436 - "GET /dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50668 - "GET /api/metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60550 - "POST /api/scrape HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:51746 - "GET /api/leads?limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56870 - "GET /api/leads HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60946 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60950 - "GET /api/leads HTTP/1.1" 200 OK

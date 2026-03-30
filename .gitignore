@@ -1,0 +1,47 @@
+# Secrets
+.env
+
+# Video/media output
+output/videos/
+output/demo_work/
+
+# Database
+*.db
+*.db.backup
+
+# Logs
+*.log
+ngrok.log
+server.log
+server_8001.log
+server_new.log
+live.log
+lt.log
+production.log
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Node modules (if any)
+node_modules/
+
+# Misc
+.cache/
+.venv/
+venv/
+ENV/
+env/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/

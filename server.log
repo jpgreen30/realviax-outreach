@@ -1,0 +1,10 @@
+/home/jpgreen1/.openclaw/workspace/realviax-outreach/run.py:40: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+INFO:     Started server process [119593]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+🎬 Starting Realviax Outreach System...
+   Dashboard: http://localhost:8000/dashboard
+   API Docs: http://localhost:8000/docs
+INFO:     127.0.0.1:49730 - "GET /api/leads HTTP/1.1" 200 OK

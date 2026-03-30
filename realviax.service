@@ -1,0 +1,21 @@
+[Unit]
+Description=Realviax Outreach API
+After=network.target
+
+[Service]
+Type=simple
+User=jpgreen1
+Group=jpgreen1
+WorkingDirectory=/home/jpgreen1/.openclaw/workspace/realviax-outreach
+Environment="PATH=/home/jpgreen1/.openclaw/workspace/realviax-outreach/venv/bin"
+Environment="PORT=8000"
+# Add your API keys here:
+# Environment="BREVO_API_KEY=your_key_here"
+# Environment="TWILIO_ACCOUNT_SID=your_sid"
+# Environment="TWILIO_AUTH_TOKEN=your_token"
+ExecStart=/home/jpgreen1/.openclaw/workspace/realviax-outreach/venv/bin/python3 run.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

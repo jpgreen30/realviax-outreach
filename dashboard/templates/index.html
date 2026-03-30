@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Realviax Outreach</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: -apple-system, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 28px; }
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .metric { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .metric-value { font-size: 36px; font-weight: bold; color: #667eea; }
+        .metric-label { color: #666; font-size: 14px; margin-top: 5px; }
+        .card { background: white; padding: 24px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; color: #666; font-weight: 600; }
+        .btn { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-success { background: #10b981; }
+        .btn-danger { background: #ef4444; }
+        .form-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; flex: 1; }
+        textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; min-height: 100px; }
+        .alert { padding: 12px; border-radius: 6px; margin-bottom: 15px; }
+        .alert-success { background: #d1fae5; color: #065f46; }
+        .alert-error { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎬 Realviax Outreach Dashboard</h1>
+        <p>Automated real estate video lead generation</p>
+    </div>
+
+    <div class="metrics">
+        <div class="metric">
+            <div class="metric-value" id="total-leads">-</div>
+            <div class="metric-label">Total Leads</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value" id="emails-sent">-</div>
+            <div class="metric-label">Emails Sent</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value" style="color: #10b981;" id="conversions">-</div>
+            <div class="metric-label">Conversions</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value" style="color: #f59e0b;" id="revenue">$0</div>
+            <div class="metric-label">Revenue</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🚀 Quick Actions</h2>
+        <form id="scrape-form">
+            <div class="form-row">
+                <input type="text" id="url" placeholder="Enter Zillow/Redfin/Realtor.com listing URL" required>
+                <select id="platform">
+                    <option value="zillow">Zillow</option>
+                    <option value="redfin">Redfin</option>
+                    <option value="realtor_com">Realtor.com</option>
+                </select>
+                <button type="submit" class="btn">Scrape & Process</button>
+            </div>
+        </form>
+        <div id="alert-area"></div>
+    </div>
+
+    <div class="card">
+        <h2>📋 Recent Leads</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Address</th>
+                    <th>Agent Email</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="leads-table"></tbody>
+        </table>
+    </div>
+
+    <script>
+        async function loadMetrics() {
+            try {
+                const res = await fetch('/api/metrics');
+                const data = await res.json();
+                document.getElementById('total-leads').textContent = data.total_leads;
+                document.getElementById('emails-sent').textContent = data.emails_sent;
+                document.getElementById('conversions').textContent = data.conversions;
+                document.getElementById('revenue').textContent = '$' + data.revenue;
+            } catch(e) { console.error(e); }
+        }
+        
+        async function loadLeads() {
+            try {
+                const res = await fetch('/api/leads?limit=20');
+                const leads = await res.json();
+                const tbody = document.getElementById('leads-table');
+                tbody.innerHTML = leads.map(l => `
+                    <tr>
+                        <td>
+                            <strong>${l.address || 'No address'}</strong><br>
+                            <small>${l.status}</small>
+                        </td>
+                        <td>${l.agent_email || '-'}</td>
+                        <td>$${l.price ? l.price.toLocaleString() : '-'}</td>
+                        <td>
+                            ${l.converted ? '✅ Converted' : (l.status === 'email_sent' ? '📧 Sent' : '⏳ Scraped')}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm" onclick="generateVideo(${l.id})">Gen Video</button>
+                            <button class="btn btn-sm btn-success" onclick="sendEmail(${l.id})">Send Email</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+        
+        document.getElementById('scrape-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('url').value;
+            const platform = document.getElementById('platform').value;
+            
+            const formData = new FormData();
+            formData.append('url', url);
+            formData.append('platform', platform);
+            
+            try {
+                const res = await fetch('/api/scrape', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    showAlert('Scrape successful! Lead created.', 'success');
+                    loadLeads();
+                } else {
+                    showAlert('Scrape failed: ' + (data.detail || 'Unknown error'), 'error');
+                }
+            } catch (err) {
+                showAlert('Error: ' + err.message, 'error');
+            }
+        };
+        
+        async function generateVideo(id) {
+            alert('Video generation started (this may take 1-2 minutes).');
+            try {
+                const res = await fetch(`/api/generate/${id}`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Video created: ' + data.video_path);
+                } else {
+                    alert('Failed: ' + (data.detail || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            loadLeads();
+        }
+        
+        async function sendEmail(id) {
+            if (!confirm('Send teaser email to agent?')) return;
+            try {
+                const res = await fetch(`/api/send-email/${id}`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Email sent!');
+                    loadLeads();
+                } else {
+                    alert('Failed: ' + (data.detail || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        function showAlert(msg, type) {
+            const area = document.getElementById('alert-area');
+            area.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+            setTimeout(() => area.innerHTML = '', 5000);
+        }
+        
+        // Load on start and refresh every 30s
+        loadMetrics();
+        loadLeads();
+        setInterval(() => { loadMetrics(); loadLeads(); }, 30000);
+    </script>
+</body>
+</html>

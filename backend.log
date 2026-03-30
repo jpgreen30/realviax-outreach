@@ -1,0 +1,39 @@
+INFO:     Started server process [140968]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     54.188.28.11:43544 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45642 - "GET /health/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45644 - "GET /api/v1/leads/?limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45658 - "HEAD /videos/lead_1_teaser.mp4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45668 - "POST /api/v1/payments/create-checkout-session/1 HTTP/1.1" 200 OK
+INFO:     34.71.85.182:44356 - "HEAD /health/ HTTP/1.1" 405 Method Not Allowed
+INFO:     199.45.154.148:50952 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     199.45.154.148:50966 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     199.45.154.148:50982 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     199.45.154.148:59694 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53692 - "GET /api/v1/leads/?limit=1 HTTP/1.1" 200 OK
+INFO:     34.71.85.182:34744 - "HEAD /videos/lead_1_teaser.mp4 HTTP/1.1" 200 OK
+INFO:     137.184.115.194:36142 - "OPTIONS /api/v1/leads?limit=10 HTTP/1.1" 307 Temporary Redirect
+INFO:     24.144.89.30:51632 - "OPTIONS /api/v1/leads?limit=10 HTTP/1.1" 307 Temporary Redirect
+INFO:     52.53.151.99:60016 - "HEAD /videos/lead_1_teaser.mp4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47364 - "POST /api/v1/payments/create-checkout-session/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47380 - "POST /api/v1/payments/stripe-webhook HTTP/1.1" 404 Not Found
+INFO:     52.53.170.174:53158 - "HEAD /videos/lead_1_teaser.mp4 HTTP/1.1" 200 OK
+INFO:     18.144.22.213:43745 - "POST /api/webhooks/stripe HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55898 - "POST /api/webhooks/stripe HTTP/1.1" 404 Not Found
+INFO:     52.53.170.174:33034 - "POST /api/v1/payments/webhooks/stripe HTTP/1.1" 400 Bad Request
+INFO:     44.249.163.209:48398 - "GET / HTTP/1.1" 200 OK
+INFO:     52.53.170.174:1845 - "POST /api/webhooks/brevo HTTP/1.1" 200 OK
+INFO:     18.144.22.213:52536 - "POST /api/v1/payments/create-checkout-session/2 HTTP/1.1" 200 OK
+INFO:     18.144.22.213:10899 - "POST /api/webhooks/stripe HTTP/1.1" 404 Not Found
+INFO:     34.71.85.182:34318 - "POST /api/webhooks/stripe HTTP/1.1" 404 Not Found
+INFO:     34.71.85.182:51854 - "POST /api/v1/payments/webhooks/stripe HTTP/1.1" 400 Bad Request
+INFO:     18.144.22.213:57313 - "POST /api/v1/payments/webhooks/stripe HTTP/1.1" 400 Bad Request
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [140968]

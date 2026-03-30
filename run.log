@@ -1,0 +1,10 @@
+/home/jpgreen1/.openclaw/workspace/realviax-outreach/run.py:45: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+INFO:     Started server process [83140]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+🎬 Starting Realviax Outreach System...
+   Dashboard: http://localhost:8000
